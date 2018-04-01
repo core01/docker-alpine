@@ -1,6 +1,6 @@
-##docker-alpine
+## docker-alpine
 
-####Docker-compose configuration with NGINX + PHP-FPM + MariaDB + phpMyAdmin
+#### Docker-compose configuration with NGINX + PHP-FPM + MariaDB + phpMyAdmin
 Small docker image, ready for PHP development and production.
 **Details:**
 - NGINX from nginx:stable-alpine
