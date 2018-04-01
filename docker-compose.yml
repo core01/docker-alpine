@@ -1,0 +1,61 @@
+version: '3'
+networks:
+  docknet:
+      external: true
+services:
+  php:
+    build:
+      context: ./php
+      args:
+        - USER=core01
+    working_dir: /var/www
+    volumes:
+      - ./php/conf/:/usr/local/etc/php-fpm.d/
+      - ~/dev:/var/www
+      - sockets:/var/run/
+    tty: true
+    networks :
+      - docknet
+  nginx:
+    build:
+      context: ./nginx
+      args:
+        - USER=core01
+    working_dir: /var/www
+    volumes:
+      - ./nginx/conf/:/etc/nginx/conf.d/
+      - ~/dev:/var/www
+      - sockets:/var/run/
+    ports:
+      - 80:80
+    links:
+      - php
+    tty: true
+    networks:
+      - docknet
+  database:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+    volumes:
+      - sockets:/var/run/
+    ports:
+      - "3306:3306"
+    networks:
+      - docknet
+  phpmyadmin:    
+    image: phpmyadmin/phpmyadmin
+    links:
+      - database
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+    volumes:
+      - sockets:/var/run/
+    ports:
+      - '8080:80'
+    networks:
+      - docknet
+volumes:
+  sockets: {}
